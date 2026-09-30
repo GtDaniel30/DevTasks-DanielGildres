@@ -4,7 +4,7 @@ import {
   isValidTask,
   filterTasks,
   getTaskStats
-} from "../js/app.js";
+} from "../js/Taskmanager.js";
 
 describe("isValidTask", () => {
   it("accepta una tasca amb text", () => {
@@ -18,6 +18,11 @@ describe("isValidTask", () => {
   it("rebutja una tasca formada només per espais", () => {
     expect(isValidTask("   ")).toBe(false);
   });
+
+  it("rebutja valors que no són text", () => {
+    expect(isValidTask(null)).toBe(false);
+    expect(isValidTask(42)).toBe(false);
+  });
 });
 
 describe("createTask", () => {
@@ -27,6 +32,10 @@ describe("createTask", () => {
     expect(task.text).toBe("Fer els tests");
     expect(task.completed).toBe(false);
     expect(task.id).toBeDefined();
+  });
+
+  it("retalla els espais al voltant del text", () => {
+    expect(createTask("  Llegir documentació  ").text).toBe("Llegir documentació");
   });
 });
 
@@ -47,6 +56,10 @@ describe("filterTasks", () => {
   it("retorna només les tasques completades", () => {
     expect(filterTasks(tasks, "completed")).toHaveLength(1);
   });
+
+  it("retorna totes les tasques per a un filtre desconegut", () => {
+    expect(filterTasks(tasks, "unknown")).toBe(tasks);
+  });
 });
 
 describe("getTaskStats", () => {
@@ -62,5 +75,9 @@ describe("getTaskStats", () => {
       pending: 2,
       completed: 1
     });
+  });
+
+  it("calcula estadístiques correctes per a una llista buida", () => {
+    expect(getTaskStats([])).toEqual({ total: 0, pending: 0, completed: 0 });
   });
 });
